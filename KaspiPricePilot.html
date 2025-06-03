@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -74,6 +73,7 @@
             border-radius: 2px;
         }
 
+        /* 修改汇率显示样式 */
         .exchange-rate {
             background-color: #e3f2fd;
             padding: 12px;
@@ -84,6 +84,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center; /* 添加这行实现垂直居中 */
             gap: 8px;
         }
 
@@ -92,6 +93,7 @@
             color: #0d47a1;
             font-size: 16px;
             white-space: nowrap;
+            margin: 0; /* 添加这行消除可能的默认边距 */
         }
 
         .exchange-rate input {
@@ -104,7 +106,8 @@
             color: #1565c0;
             font-weight: bold;
             background-color: #fff;
-            margin: 0;
+            margin: 0; /* 添加这行消除可能的默认边距 */
+            vertical-align: middle; /* 添加这行确保输入框垂直对齐 */
         }
 
         .input-section {
@@ -533,7 +536,12 @@
         
         /* 俄语界面样式 */
         .lang-ru .purchase-label::after,
-        .lang-ru .shipping-label::after {
+        .lang-ru .shipping-label::after,
+        .lang-ru .gross-profit-label::after {
+            content: " (₸)";
+        }
+        
+        .lang-zh .gross-profit-label::after {
             content: " (¥)";
         }
         
@@ -557,9 +565,9 @@
             }
             
             .exchange-rate {
-                flex-direction: column;
+                flex-direction: row; /* 修改为横向排列 */
                 align-items: center;
-                gap: 6px;
+                padding: 8px 12px;
             }
             
             .exchange-rate label {
@@ -567,8 +575,9 @@
             }
             
             .exchange-rate input {
-                width: 100%;
-                max-width: 200px;
+                width: 100px; /* 调整移动端输入框宽度 */
+                padding: 6px 8px;
+                font-size: 14px;
             }
             
             .dimensions {
@@ -716,9 +725,9 @@
 <div class="error-message" id="shipping-error">请输入有效的运费</div>
 </div>
 <div class="form-group">
-<label id="profit-label">利润率（%）</label>
-<input class="form-control" id="profitMargin" min="0" placeholder="输入利润率" step="0.1" type="number" value=""/>
-<div class="error-message" id="profit-error">请输入有效的利润率</div>
+<label for="grossProfit" id="gross-profit-label">计划毛利 (¥)</label>
+<input class="form-control" id="grossProfit" min="0" placeholder="输入计划毛利" step="0.01" type="number" value=""/>
+<div class="error-message" id="profit-error">请输入有效的计划毛利</div>
 </div>
 <div class="form-group">
 <label id="cashback-label">下单返利（%）</label>
@@ -793,7 +802,7 @@
 <div class="section">
 <h3 class="section-title" id="fees-title">头程、海外仓费用</h3>
 <div class="switch-container">
-<span class="switch-label">海外仓费用</span>
+<span class="switch-label" id="overseas-toggle-label">是否计算海外仓费用</span>
 <label class="switch">
 <input checked="" id="overseasToggle" type="checkbox"/>
 <span class="slider"></span>
@@ -804,7 +813,7 @@
 <input class="form-control output-value" id="overseasWarehouse" readonly="" type="text">
 </input></div>
 <div class="switch-container">
-<span class="switch-label">头程费用</span>
+<span class="switch-label" id="firstmile-toggle-label">是否计算头程费用</span>
 <label class="switch">
 <input checked="" id="firstMileToggle" type="checkbox"/>
 <span class="slider"></span>
@@ -838,7 +847,7 @@
 <div class="results-section">
 <h3 class="section-title" id="return-title">回款费用</h3>
 <div class="switch-container">
-<span class="switch-label">提现手续费</span>
+<span class="switch-label" id="withdrawal-fee-toggle-label">是否计算提现手续费</span>
 <label class="switch">
 <input checked="" id="withdrawalFeeToggle" type="checkbox"/>
 <span class="slider"></span>
@@ -849,7 +858,7 @@
 <input class="form-control output-value" id="withdrawalFee" readonly="" type="text">
 </input></div>
 <div class="switch-container">
-<span class="switch-label">汇损</span>
+<span class="switch-label" id="exchange-loss-toggle-label">是否计算汇损</span>
 <label class="switch">
 <input checked="" id="exchangeLossToggle" type="checkbox"/>
 <span class="slider"></span>
@@ -860,7 +869,7 @@
 <input class="form-control output-value" id="exchangeLoss" readonly="" type="text">
 </input></div>
 <div class="switch-container">
-<span class="switch-label">汇款手续费</span>
+<span class="switch-label" id="remittance-fee-toggle-label">是否计算汇款手续费</span>
 <label class="switch">
 <input checked="" id="remittanceFeeToggle" type="checkbox"/>
 <span class="slider"></span>
@@ -915,7 +924,7 @@
                 categoryLabel: "商品分类",
                 purchaseLabel: "采购价 (¥)",
                 shippingLabel: "运费 (¥)",
-                profitLabel: "利润率（%）",
+                grossProfitLabel: "计划毛利 (¥)",
                 cashbackLabel: "下单返利（%）",
                 paymentLabel: "汇款方式",
                 logisticsTitle: "物流信息",
@@ -946,7 +955,7 @@
                 commissionLabel: "当前佣金率：",
                 purchasePlaceholder: "输入采购价",
                 shippingPlaceholder: "阿拉木图运费",
-                profitPlaceholder: "输入利润率",
+                grossProfitPlaceholder: "输入计划毛利",
                 cashbackPlaceholder: "输入下单返利",
                 weightPlaceholder: "输入重量",
                 lengthPlaceholder: "长",
@@ -955,7 +964,15 @@
                 exchangePlaceholder: "输入汇率",
                 categorySearchPlaceholder: "搜索分类...",
                 overseasUnitLabel: "海外仓单价 (¥/m³)",
-                firstmileUnitLabel: "头程单价 (¥/m³)"
+                firstmileUnitLabel: "头程单价 (¥/m³)",
+                kaspiPriceCnyLabel: "人民币 (¥)",
+                kaspiPriceKztLabel: "坚戈 (₸)",
+                // 新增开关标签
+                overseasToggleLabel: "是否计算海外仓费用",
+                firstmileToggleLabel: "是否计算头程费用",
+                withdrawalFeeToggleLabel: "是否计算提现手续费",
+                exchangeLossToggleLabel: "是否计算汇损",
+                remittanceFeeToggleLabel: "是否计算汇款手续费"
             },
             ru: {
                 companyName: "Синьцзянская Международная Логистическая Компания Хан Мао Тун",
@@ -966,7 +983,7 @@
                 categoryLabel: "Категория товара",
                 purchaseLabel: "Закупочная цена (₸)",
                 shippingLabel: "Стоимость доставки (₸)",
-                profitLabel: "Маржа прибыли (%)",
+                grossProfitLabel: "Плановая валовая прибыль (₸)",
                 cashbackLabel: "Кэшбэк за заказ (%)",
                 paymentLabel: "Способ оплаты",
                 logisticsTitle: "Логистическая информация",
@@ -997,7 +1014,7 @@
                 commissionLabel: "Текущая комиссия: ",
                 purchasePlaceholder: "Введите закупочную цену",
                 shippingPlaceholder: "Стоимость доставки в Алматы",
-                profitPlaceholder: "Введите маржу прибыли",
+                grossProfitPlaceholder: "Введите плановую валовую прибыль",
                 cashbackPlaceholder: "Введите кэшбэк за заказ",
                 weightPlaceholder: "Введите вес",
                 lengthPlaceholder: "Длина",
@@ -1006,13 +1023,21 @@
                 exchangePlaceholder: "Введите курс обмена",
                 categorySearchPlaceholder: "Поиск категории...",
                 overseasUnitLabel: "Цена зарубежного склада (₸/м³)",
-                firstmileUnitLabel: "Цена первой мили (₸/м³)"
+                firstmileUnitLabel: "Цена первой мили (₸/м³)",
+                kaspiPriceCnyLabel: "Юань (¥)",
+                kaspiPriceKztLabel: "Тенге (₸)",
+                // 新增开关标签
+                overseasToggleLabel: "Расчет стоимости зарубежного склада",
+                firstmileToggleLabel: "Расчет стоимости первой мили",
+                withdrawalFeeToggleLabel: "Расчет комиссии за вывод",
+                exchangeLossToggleLabel: "Расчет потерь при обмене",
+                remittanceFeeToggleLabel: "Расчет комиссии за перевод"
             }
         };
 
         // 商品分类数据
         const categories = [
-                  { id: "auto-cards", name: { zh: "汽车名片", ru: "Автомобильные визитки" }, commission: 0.12 },
+           { id: "auto-cards", name: { zh: "汽车名片", ru: "Автомобильные визитки" }, commission: 0.12 },
             { id: "auto-caps", name: { zh: "汽车轮毂罩", ru: "Автомобильные колпаки" }, commission: 0.12 },
             { id: "auto-awnings", name: { zh: "汽车遮阳棚", ru: "Автомобильные маркизы" }, commission: 0.12 },
             { id: "auto-organizers", name: { zh: "汽车收纳箱及袋", ru: "Автомобильные органайзеры и сумки" }, commission: 0.12 },
@@ -3559,7 +3584,7 @@
             const exchangeRate = document.getElementById('exchangeRate');
             const purchasePrice = document.getElementById('purchasePrice');
             const shippingCost = document.getElementById('shippingCost');
-            const profitMargin = document.getElementById('profitMargin');
+            const grossProfit = document.getElementById('grossProfit'); // 修改为计划毛利
             const cashback = document.getElementById('cashback');
             const paymentMethod = document.getElementById('paymentMethod');
             const length = document.getElementById('length');
@@ -3610,6 +3635,13 @@
             // 货币选择器
             const currencyCny = document.getElementById('currency-cny');
             const currencyKzt = document.getElementById('currency-kzt');
+
+            // 开关标签元素
+            const overseasToggleLabel = document.getElementById('overseas-toggle-label');
+            const firstmileToggleLabel = document.getElementById('firstmile-toggle-label');
+            const withdrawalFeeToggleLabel = document.getElementById('withdrawal-fee-toggle-label');
+            const exchangeLossToggleLabel = document.getElementById('exchange-loss-toggle-label');
+            const remittanceFeeToggleLabel = document.getElementById('remittance-fee-toggle-label');
 
             // 初始化分类选择器
             function populateCategorySelect(selectElement, categories, placeholder) {
@@ -3741,6 +3773,7 @@
                     const fieldsToConvert = [
                         purchasePrice, 
                         shippingCost,
+                        grossProfit, // 新增计划毛利的转换
                         overseasUnitPrice,
                         firstMileUnitPrice
                     ];
@@ -3806,7 +3839,7 @@
                 document.getElementById('category-label').textContent = trans.categoryLabel;
                 document.getElementById('purchase-label').textContent = trans.purchaseLabel;
                 document.getElementById('shipping-label').textContent = trans.shippingLabel;
-                document.getElementById('profit-label').textContent = trans.profitLabel;
+                document.getElementById('gross-profit-label').textContent = trans.grossProfitLabel; // 修改为计划毛利
                 document.getElementById('cashback-label').textContent = trans.cashbackLabel;
                 document.getElementById('payment-label').textContent = trans.paymentLabel;
                 document.getElementById('logistics-title').textContent = trans.logisticsTitle;
@@ -3836,7 +3869,7 @@
                 
                 document.getElementById('kaspi-price-cny-label').textContent = trans.kaspiPriceCnyLabel;
                 document.getElementById('kaspi-price-kzt-label').textContent = trans.kaspiPriceKztLabel;
-    document.getElementById('overseas-unit-label').textContent = trans.overseasUnitLabel;
+                document.getElementById('overseas-unit-label').textContent = trans.overseasUnitLabel;
                 document.getElementById('firstmile-unit-label').textContent = trans.firstmileUnitLabel;
 
                 // 更新按钮文本
@@ -3846,13 +3879,20 @@
                 categorySearch.placeholder = trans.categorySearchPlaceholder;
                 purchasePrice.placeholder = trans.purchasePlaceholder;
                 shippingCost.placeholder = trans.shippingPlaceholder;
-                profitMargin.placeholder = trans.profitPlaceholder;
+                grossProfit.placeholder = trans.grossProfitPlaceholder; // 修改为计划毛利
                 cashback.placeholder = trans.cashbackPlaceholder;
                 weight.placeholder = trans.weightPlaceholder;
                 length.placeholder = trans.lengthPlaceholder;
                 width.placeholder = trans.widthPlaceholder;
                 height.placeholder = trans.heightPlaceholder;
                 exchangeRate.placeholder = trans.exchangePlaceholder;
+                
+                // 更新开关标签文本
+                overseasToggleLabel.textContent = trans.overseasToggleLabel;
+                firstmileToggleLabel.textContent = trans.firstmileToggleLabel;
+                withdrawalFeeToggleLabel.textContent = trans.withdrawalFeeToggleLabel;
+                exchangeLossToggleLabel.textContent = trans.exchangeLossToggleLabel;
+                remittanceFeeToggleLabel.textContent = trans.remittanceFeeToggleLabel;
                 
                 // 更新分类选择框
                 populateCategorySelect(categorySelect, categories, currentLanguage === 'zh' ? '-- 请选择商品分类 --' : '-- Выберите категорию товара --');
@@ -3900,10 +3940,10 @@
                     isValid = false;
                 }
                 
-                // 验证利润率
-                const margin = parseFloat(profitMargin.value);
-                if (isNaN(margin) || margin < 0) { 
-                    profitError.textContent = currentLanguage === 'zh' ? '请输入有效的利润率' : 'Введите действительную маржу прибыли';
+                // 验证计划毛利
+                const profitInput = parseFloat(grossProfit.value);
+                if (isNaN(profitInput) || profitInput < 0) { 
+                    profitError.textContent = currentLanguage === 'zh' ? '请输入有效的计划毛利' : 'Введите действительную плановую валовую прибыль';
                     profitError.style.display = 'block';
                     isValid = false;
                 }
@@ -3935,6 +3975,34 @@
                 return 0;
             }
 
+            // 初始化默认单价
+            function initializeDefaultPrices() {
+                const rate = parseFloat(exchangeRate.value) || 70;
+                
+                // 检查用户是否手动修改过值
+                const overseasUserSet = overseasUnitPrice.dataset.userSet === 'true';
+                const firstMileUserSet = firstMileUnitPrice.dataset.userSet === 'true';
+                
+                // 中文界面：显示坚戈值除以汇率（人民币值）
+                if (currentLanguage === 'zh') {
+                    if (!overseasUserSet) {
+                        overseasUnitPrice.value = (1000 / rate).toFixed(2);
+                    }
+                    if (!firstMileUserSet) {
+                        firstMileUnitPrice.value = (100 / rate).toFixed(2);
+                    }
+                } 
+                // 俄语界面：直接显示坚戈值
+                else {
+                    if (!overseasUserSet) {
+                        overseasUnitPrice.value = "1000";
+                    }
+                    if (!firstMileUserSet) {
+                        firstMileUnitPrice.value = "100";
+                    }
+                }
+            }
+
             // 计算所有费用并显示结果
             function calculateAll() {
                 // 验证输入
@@ -3946,24 +4014,32 @@
                 const rate = parseFloat(exchangeRate.value);
                 const purchase = parseFloat(purchasePrice.value) || 0;
                 const shipping = parseFloat(shippingCost.value) || 0;
-                const margin = parseFloat(profitMargin.value) || 0;
+                const grossProfitInput = parseFloat(grossProfit.value) || 0; // 计划毛利
                 const cb = parseFloat(cashback.value) || 0;
                 const w = parseFloat(weight.value) || 0;
                 const vol = calculateVolume();
                 const cat = currentCommission;
                 
-                // 获取费用单价
-                const overseasUnit = parseFloat(overseasUnitPrice.value) || 1000;
-                const firstMileUnit = parseFloat(firstMileUnitPrice.value) || 100;
+                // 获取费用单价（根据语言转换为人民币）
+                let overseasUnit, firstMileUnit;
+                if (currentLanguage === 'zh') {
+                    // 中文界面：用户输入的是人民币
+                    overseasUnit = parseFloat(overseasUnitPrice.value) || 0;
+                    firstMileUnit = parseFloat(firstMileUnitPrice.value) || 0;
+                } else {
+                    // 俄语界面：用户输入的是坚戈，转换为人民币
+                    overseasUnit = (parseFloat(overseasUnitPrice.value) || 0) / rate;
+                    firstMileUnit = (parseFloat(firstMileUnitPrice.value) || 0) / rate;
+                }
 
-                // 计算Kaspi售价（人民币）
+                // 计算Kaspi售价（人民币） - 使用计划毛利
                 let kaspiPriceCnyValue;
                 if (currentLanguage === 'ru') {
-                    // 俄语界面：采购价和运费是坚戈，需要转换为人民币
-                    kaspiPriceCnyValue = (purchase + shipping) * (1 + margin / 100) / rate;
+                    // 俄语界面：采购价和运费是坚戈，计划毛利也是坚戈
+                    kaspiPriceCnyValue = (purchase + shipping + grossProfitInput) / rate;
                 } else {
-                    // 中文界面：采购价和运费是人民币
-                    kaspiPriceCnyValue = (purchase + shipping) * (1 + margin / 100);
+                    // 中文界面：采购价和运费是人民币，计划毛利也是人民币
+                    kaspiPriceCnyValue = purchase + shipping + grossProfitInput;
                 }
 
                 // 计算Kaspi售价（坚戈）
@@ -3973,47 +4049,23 @@
                 kaspiPriceCny.value = kaspiPriceCnyValue.toFixed(2) + '¥';
                 kaspiPriceKzt.value = kaspiPriceKztValue.toFixed(2) + '₸';
 
-                // === 修改点2：海外仓费用计算（中文界面不除汇率）===
+                // 海外仓费用计算
                 let overseasValue = 0;
                 if (overseasToggle.checked && vol > 0) {
                     if (vol <= 1) {
-                        if (currentLanguage === 'zh') {
-                            // 中文界面：直接使用人民币计算
-                            overseasValue = overseasUnit;
-                        } else {
-                            // 俄语界面：坚戈转人民币
-                            overseasValue = overseasUnit / rate;
-                        }
+                        overseasValue = overseasUnit;
                     } else {
-                        if (currentLanguage === 'zh') {
-                            // 中文界面：直接使用人民币计算
-                            overseasValue = Math.ceil(vol) * overseasUnit;
-                        } else {
-                            // 俄语界面：坚戈转人民币
-                            overseasValue = (Math.ceil(vol) * overseasUnit) / rate;
-                        }
+                        overseasValue = Math.ceil(vol) * overseasUnit;
                     }
                 }
 
-                // === 修改点3：头程费用计算（中文界面不除汇率）===
+                // 头程费用计算
                 let firstMileValue = 0;
                 if (firstMileToggle.checked && vol > 0) {
                     if (vol <= 0.01) {
-                        if (currentLanguage === 'zh') {
-                            // 中文界面：直接使用人民币计算
-                            firstMileValue = firstMileUnit;
-                        } else {
-                            // 俄语界面：坚戈转人民币
-                            firstMileValue = firstMileUnit / rate;
-                        }
+                        firstMileValue = firstMileUnit;
                     } else {
-                        if (currentLanguage === 'zh') {
-                            // 中文界面：直接使用人民币计算
-                            firstMileValue = vol * firstMileUnit;
-                        } else {
-                            // 俄语界面：坚戈转人民币
-                            firstMileValue = (vol * firstMileUnit) / rate;
-                        }
+                        firstMileValue = vol * 100 * firstMileUnit;
                     }
                 }
 
@@ -4130,6 +4182,7 @@
                     // 俄语界面:输入值是坚戈,需要转换为人民币
                     const purchaseInCNY = purchase / rate;
                     const shippingInCNY = shipping / rate;
+                    const grossProfitInCNY = grossProfitInput / rate;
                     profitValue = estimatedAmountValue - purchaseInCNY - shippingInCNY;
                 } else {
                     // 中文界面:输入值已经是人民币
@@ -4198,8 +4251,14 @@
             remittanceFeeToggle.addEventListener('change', calculateAll);
             
             // 费用单价变化时重新计算
-            overseasUnitPrice.addEventListener('input', calculateAll);
-            firstMileUnitPrice.addEventListener('input', calculateAll);
+            overseasUnitPrice.addEventListener('input', function() {
+                this.dataset.userSet = 'true';
+                calculateAll();
+            });
+            firstMileUnitPrice.addEventListener('input', function() {
+                this.dataset.userSet = 'true';
+                calculateAll();
+            });
 
             // 尺寸变化时自动计算体积
             length.addEventListener('input', calculateVolume);
@@ -4207,60 +4266,16 @@
             height.addEventListener('input', calculateVolume);
             
             // 输入变化时隐藏错误消息
-            exchangeRate.addEventListener('input', () => exchangeError.style.display = 'none');
+            exchangeRate.addEventListener('input', function() {
+                exchangeError.style.display = 'none';
+                // 汇率变化时更新默认单价
+                initializeDefaultPrices();
+                calculateAll();
+            });
             purchasePrice.addEventListener('input', () => purchaseError.style.display = 'none');
             shippingCost.addEventListener('input', () => shippingError.style.display = 'none');
-            profitMargin.addEventListener('input', () => profitError.style.display = 'none');
+            grossProfit.addEventListener('input', () => profitError.style.display = 'none'); // 计划毛利
             weight.addEventListener('input', () => weightError.style.display = 'none');
-
-            // 初始化默认单价（基于当前语言）
-            function initializeDefaultPrices() {
-                const rate = parseFloat(exchangeRate.value) || 70;
-                
-                if (currentLanguage === 'zh') {
-                    // 中文：设置人民币默认值
-                    if (!overseasUnitPrice.dataset.userSet) {
-                        overseasUnitPrice.value = (1000 / rate).toFixed(2);
-                    }
-                    if (!firstMileUnitPrice.dataset.userSet) {
-                        firstMileUnitPrice.value = (100 / rate).toFixed(2);
-                    }
-                } else {
-                    // 俄语：设置坚戈默认值
-                    if (!overseasUnitPrice.dataset.userSet) {
-                        overseasUnitPrice.value = '1000';
-                    }
-                    if (!firstMileUnitPrice.dataset.userSet) {
-                        firstMileUnitPrice.value = '100';
-                    }
-                }
-            }
-
-            // 当汇率变化时更新中文界面的默认单价
-            exchangeRate.addEventListener('input', function() {
-                if (currentLanguage === 'zh') {
-                    const rate = parseFloat(this.value) || 70;
-                    
-                    // 只更新未修改过的默认值
-                    if (!overseasUnitPrice.dataset.userSet) {
-                        overseasUnitPrice.value = (1000 / rate).toFixed(2);
-                    }
-                    if (!firstMileUnitPrice.dataset.userSet) {
-                        firstMileUnitPrice.value = (100 / rate).toFixed(2);
-                    }
-                    
-                    calculateAll();
-                }
-            });
-
-            // 标记用户是否修改过单价
-            overseasUnitPrice.addEventListener('input', function() {
-                this.dataset.userSet = 'true';
-            });
-
-            firstMileUnitPrice.addEventListener('input', function() {
-                this.dataset.userSet = 'true';
-            });
 
             // 初始化页面
             function initializePage() {
