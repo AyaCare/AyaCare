@@ -417,6 +417,41 @@
             gap: 8px;
         }
         
+        /* 导入导出样式 */
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .qr-container p {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .scanner-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .import-export-section {
+            margin-top: 20px;
+        }
+        
         /* 响应式调整 */
         @media (min-width: 576px) {
             .container {
@@ -538,6 +573,15 @@
                 <button class="btn" style="margin-top: 15px;" id="copy-key-btn">
                     <i class="fas fa-copy"></i> 复制密钥
                 </button>
+                <!-- 添加导出按钮 -->
+                <button class="btn" style="margin-top: 10px;" id="export-key-btn">
+                    <i class="fas fa-share-alt"></i> 导出密钥
+                </button>
+                <!-- 添加二维码容器 -->
+                <div id="qrcode-container" class="qr-container">
+                    <canvas id="qrcode-canvas"></canvas>
+                    <p>扫描二维码在另一台设备导入</p>
+                </div>
             </div>
         </div>
         
@@ -556,6 +600,26 @@
                     <div id="verify-message"></div>
                     <div id="verify-details" style="margin-top: 10px; font-size: 0.9rem;"></div>
                 </div>
+            </div>
+            
+            <!-- 添加密钥导入部分 -->
+            <div class="section import-export-section">
+                <h2 class="section-title"><i class="fas fa-file-import"></i> 密钥导入</h2>
+                <div class="form-group">
+                    <label for="import-key">导入密钥数据：</label>
+                    <textarea id="import-key" placeholder="粘贴密钥JSON数据或扫描二维码" rows="4"></textarea>
+                </div>
+                <button id="import-btn" class="btn">
+                    <i class="fas fa-upload"></i> 导入密钥
+                </button>
+                <div class="qr-scanner-container" id="scanner-container" style="margin-top: 15px; display: none;">
+                    <div class="scanner-placeholder" id="qr-video">
+                        <i class="fas fa-camera"></i> 摄像头区域
+                    </div>
+                </div>
+                <button id="toggle-scanner-btn" class="btn" style="margin-top: 10px;">
+                    <i class="fas fa-camera"></i> 打开二维码扫描
+                </button>
             </div>
         </div>
         
@@ -755,6 +819,26 @@
                 });
             },
             
+            // 导出所有密钥
+            exportKeys() {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const keys = JSON.parse(localStorage.getItem('keys')) || [];
+                        resolve(keys);
+                    }, 300);
+                });
+            },
+            
+            // 导入密钥
+            importKeys(keys) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        localStorage.setItem('keys', JSON.stringify(keys));
+                        resolve({ success: true, count: keys.length });
+                    }, 300);
+                });
+            },
+            
             // 生成随机密钥
             _generateKey() {
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -833,6 +917,7 @@
             }
             
             keyDisplay.style.display = 'block';
+            document.getElementById('qrcode-container').style.display = 'none';
         }
         
         // 使用密钥
@@ -976,6 +1061,62 @@
             }
         }
         
+        // 生成二维码
+        function generateQRCode(data) {
+            const container = document.getElementById('qrcode-container');
+            const canvas = document.getElementById('qrcode-canvas');
+            container.style.display = 'flex';
+            
+            // 清空之前的内容
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 使用简单QR码生成（实际项目中应使用库如qrcode.js）
+            const text = JSON.stringify(data);
+            const qrSize = 200;
+            canvas.width = qrSize;
+            canvas.height = qrSize;
+            
+            // 绘制二维码背景
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, qrSize, qrSize);
+            
+            // 绘制二维码图案（简化版）
+            context.fillStyle = 'black';
+            context.font = 'bold 10px monospace';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText('QR Code Placeholder', qrSize/2, qrSize/2);
+            
+            // 绘制边框
+            context.strokeStyle = '#333';
+            context.lineWidth = 2;
+            context.strokeRect(5, 5, qrSize-10, qrSize-10);
+            
+            // 绘制角标
+            context.fillStyle = '#1a2a6c';
+            context.fillRect(0, 0, 20, 20);
+            context.fillRect(qrSize-20, 0, 20, 20);
+            context.fillRect(0, qrSize-20, 20, 20);
+            context.fillRect(qrSize-20, qrSize-20, 20, 20);
+        }
+        
+        // 初始化二维码扫描
+        function initQRScanner() {
+            const scannerContainer = document.getElementById('scanner-container');
+            scannerContainer.style.display = 'block';
+            
+            // 实际项目中应使用库如instascan
+            // 这里显示占位信息
+            showNotification('摄像头访问功能需要实际库支持');
+        }
+        
+        // 停止二维码扫描
+        function stopQRScanner() {
+            const scannerContainer = document.getElementById('scanner-container');
+            scannerContainer.style.display = 'none';
+        }
+        
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化密钥记录
@@ -1010,6 +1151,56 @@
             document.getElementById('copy-key-btn').addEventListener('click', function() {
                 const key = document.getElementById('key-value').textContent;
                 copyToClipboard(key);
+            });
+            
+            // 导出按钮事件
+            document.getElementById('export-key-btn').addEventListener('click', async function() {
+                const keyValue = document.getElementById('key-value').textContent;
+                const keys = await KeyAPI.getAllKeys();
+                const keyData = keys.find(k => k.key === keyValue);
+                
+                if (keyData) {
+                    generateQRCode(keyData);
+                    showNotification('密钥已准备导出，请扫描二维码');
+                } else {
+                    showNotification('未找到密钥数据', false);
+                }
+            });
+            
+            // 导入按钮事件
+            document.getElementById('import-btn').addEventListener('click', async function() {
+                const importData = document.getElementById('import-key').value.trim();
+                
+                try {
+                    const keyData = JSON.parse(importData);
+                    const keys = await KeyAPI.getAllKeys();
+                    
+                    // 检查是否已存在
+                    const existing = keys.some(k => k.key === keyData.key);
+                    if (existing) {
+                        showNotification('密钥已存在', false);
+                        return;
+                    }
+                    
+                    keys.push(keyData);
+                    await KeyAPI.importKeys(keys);
+                    showNotification(`成功导入密钥: ${keyData.key}`);
+                    updateKeyRecords();
+                } catch (e) {
+                    showNotification('导入失败: 无效的密钥数据', false);
+                }
+            });
+            
+            // 二维码扫描功能
+            document.getElementById('toggle-scanner-btn').addEventListener('click', function() {
+                const scannerContainer = document.getElementById('scanner-container');
+                if (scannerContainer.style.display === 'none') {
+                    scannerContainer.style.display = 'block';
+                    initQRScanner();
+                } else {
+                    scannerContainer.style.display = 'none';
+                    stopQRScanner();
+                }
             });
             
             // 验证按钮事件
