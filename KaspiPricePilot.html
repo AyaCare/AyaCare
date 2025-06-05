@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Kaspi 电商利润计算器</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kaspi 电商利润计算器</title>
+<style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -1082,367 +1083,366 @@
 </head>
 <body>
 <!-- 锁定屏幕 -->
-<div id="lock-screen" class="lock-screen">
-    <div class="lock-container">
-        <div class="lock-header">
-            <h1 id="lock-company-name">新疆航贸通国际供应链有限公司</h1>
-            <h2 id="lock-app-title">Kaspi 电商利润计算器</h2>
-        </div>
-        
-        <div class="lock-form">
-            <div class="form-group">
-                <label id="key-label">请输入解锁密钥</label>
-                <input id="unlock-key" type="password" placeholder="输入密钥..." autocomplete="off">
-                <div class="error-message" id="key-error"></div>
-            </div>
-            
-            <button class="btn-unlock" id="unlockBtn">解锁应用</button>
-            
-            <div class="lock-time" id="lock-time">
-                <span id="time-label">剩余使用时间:</span>
-                <span id="time-countdown">00:00:00</span>
-            </div>
-            
-            <!-- 密钥验证状态显示 -->
-            <div class="key-validation" id="key-validation">
-                <div id="key-status">密钥状态: <span class="key-status invalid-key">未验证</span></div>
-                <div id="expiry-info">有效期: --</div>
-                <div id="device-info">设备ID: --</div>
-            </div>
-            
-            <div class="lock-language">
-                <div class="language-switcher">
-                    <button class="lang-btn active" data-lang="zh">中文</button>
-                    <button class="lang-btn" data-lang="ru">Русский</button>
-                </div>
-            </div>
-            
-            <div class="lock-contact">
-                <div class="contact-info">
-                    <span>业务咨询：</span>
-                    <a href="#" id="lock-contact-link">点击联系客服</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="lock-screen" id="lock-screen">
+<div class="lock-container">
+<div class="lock-header">
+<h1 id="lock-company-name">新疆航贸通国际供应链有限公司</h1>
+<h2 id="lock-app-title">Kaspi 电商利润计算器</h2>
 </div>
-
+<div class="lock-form">
+<div class="form-group">
+<label id="key-label">请输入解锁密钥</label>
+<input autocomplete="off" id="unlock-key" placeholder="输入密钥..." type="password"/>
+<div class="error-message" id="key-error"></div>
+</div>
+<button class="btn-unlock" id="unlockBtn">解锁应用</button>
+<div class="lock-time" id="lock-time">
+<span id="time-label">剩余使用时间:</span>
+<span id="time-countdown">00:00:00</span>
+</div>
+<!-- 密钥验证状态显示 -->
+<div class="key-validation" id="key-validation">
+<div id="key-status">密钥状态: <span class="key-status invalid-key">未验证</span></div>
+<div id="expiry-info">有效期: --</div>
+<div id="device-info">设备ID: --</div>
+</div>
+<div class="lock-language">
+<div class="language-switcher">
+<button class="lang-btn active" data-lang="zh">中文</button>
+<button class="lang-btn" data-lang="ru">Русский</button>
+</div>
+</div>
+<div class="lock-contact">
+<div class="contact-info">
+<span>业务咨询：</span>
+<a href="#" id="lock-contact-link">点击联系客服</a>
+</div>
+</div>
+<!-- 在锁定屏幕添加导入功能 -->
+<div class="lock-form">
+<!-- 原有表单元素... -->
+<div style="margin-top: 20px; text-align: center;">
+<button class="btn-unlock" id="import-key-btn">
+<i class="fas fa-file-import"></i> 导入密钥
+        </button>
+</div>
+<div id="import-section" style="display: none; margin-top: 20px;">
+<textarea id="key-import-data" placeholder="粘贴密钥JSON数据" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #3498db;"></textarea>
+<div class="error-message" id="import-error" style="display: none;"></div>
+<button class="btn-unlock" id="confirm-import-btn" style="margin-top: 10px;">
+            确认导入
+        </button>
+</div>
+</div>
+<script></script></div>
+</div>
+</div>
 <!-- 主应用内容 -->
-<div id="app-content" class="container">
-    <div class="header">
-        <h1 id="company-name">新疆航贸通国际供应链有限公司</h1>
-        <h2 id="app-title">Kaspi 电商利润计算器</h2>
-        <div class="language-switcher">
-            <button class="lang-btn active" data-lang="zh">中文</button>
-            <button class="lang-btn" data-lang="ru">Русский</button>
-        </div>
-    </div>
-    
-    <div class="exchange-rate">
-        <label id="exchange-label">当前汇率：1元人民币兑换</label>
-        <input id="exchangeRate" min="0" placeholder="输入汇率" step="0.01" type="number" value="70"/>
-        <label id="currency-label">哈萨克斯坦坚戈</label>
-        <div class="error-message" id="exchange-error">汇率必须大于0</div>
-    </div>
-    
-    <div class="input-section">
-        <div class="section">
-            <h3 class="section-title" id="product-info-title">产品信息</h3>
-            <div class="form-group category-container">
-                <label for="category-search" id="category-label">商品分类</label>
-                <div class="category-search">
-                    <input autocomplete="off" class="form-control" id="category-search" placeholder="搜索分类..." type="text"/>
-                    <span class="search-icon">🔍</span>
-                    <div class="search-results" id="search-results"></div>
-                </div>
-                <select class="form-control" id="category-select">
-                    <option data-commission="" value="">-- 请选择商品分类 --</option>
-                </select>
-                <div class="commission-display" id="commission-display">当前佣金率：0%</div>
-            </div>
-            <div class="form-group">
-                <label for="purchasePrice" id="purchase-label">采购价 (¥)</label>
-                <input class="form-control" id="purchasePrice" min="0" placeholder="输入采购价" step="0.01" type="number" value=""/>
-                <div class="error-message" id="purchase-error">请输入有效的采购价</div>
-            </div>
-            <div class="form-group">
-                <label for="shippingCost" id="shipping-label">运费 (¥)</label>
-                <input class="form-control" id="shippingCost" min="0" placeholder="阿拉木图运费" step="0.01" type="number" value=""/>
-                <div class="error-message" id="shipping-error">请输入有效的运费</div>
-            </div>
-            <div class="form-group">
-                <label for="grossProfit" id="gross-profit-label">计划毛利 (¥)</label>
-                <input class="form-control" id="grossProfit" min="0" placeholder="输入计划毛利" step="0.01" type="number" value=""/>
-                <div class="error-message" id="profit-error">请输入有效的计划毛利</div>
-            </div>
-            <div class="form-group">
-                <label id="cashback-label">下单返利（%）</label>
-                <input class="form-control" id="cashback" min="0" placeholder="输入下单返利" step="0.1" type="number" value=""/>
-            </div>
-            <div class="form-group">
-                <label for="paymentMethod" id="payment-label">汇款方式</label>
-                <select class="form-control" id="paymentMethod">
-                    <option value="publicToPublic">银行公对公</option>
-                    <option value="publicToPrivate">银行公对私</option>
-                    <option value="privateToPrivate">银行私对私</option>
-                    <option value="wechat">微信</option>
-                    <option value="alipay">支付宝</option>
-                    <option value="kaspi">Kaspi.kz</option>
-                </select>
-            </div>
-        </div>
-        <div class="section">
-            <h3 class="section-title" id="logistics-title">物流信息</h3>
-            <div class="form-group">
-                <label id="dimension-label">尺寸（厘米）</label>
-                <div class="dimensions">
-                    <div>
-                        <input class="form-control" id="length" min="0.1" placeholder="长" step="0.1" type="number" value=""/>
-                    </div>
-                    <div>
-                        <input class="form-control" id="width" min="0.1" placeholder="宽" step="0.1" type="number" value=""/>
-                    </div>
-                    <div>
-                        <input class="form-control" id="height" min="0.1" placeholder="高" step="0.1" type="number" value=""/>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="volume" id="volume-label">体积（立方米）</label>
-                <input class="form-control output-value" id="volume" readonly="" type="text"/>
-            </div>
-            <div class="form-group">
-                <label for="weight" id="weight-label">重量（千克）</label>
-                <input class="form-control" id="weight" min="0.01" placeholder="输入重量" step="0.01" type="number" value=""/>
-                <div class="error-message" id="weight-error">请输入有效的重量</div>
-            </div>
-            <div class="form-group">
-                <label id="kaspi-price-label">Kaspi 售价</label>
-                <div class="kaspi-price-container">
-                    <div class="kaspi-price-box">
-                        <div class="kaspi-price-label" id="kaspi-price-cny-label">人民币 (¥)</div>
-                        <input class="form-control output-value" id="kaspiPriceCny" readonly="" type="text"/>
-                    </div>
-                    <div class="kaspi-price-box">
-                        <div class="kaspi-price-label" id="kaspi-price-kzt-label">坚戈 (₸)</div>
-                        <input class="form-control output-value" id="kaspiPriceKzt" readonly="" type="text"/>
-                    </div>
-                </div>
-            </div>
-            <div class="cost-price-container">
-                <div class="cost-price-group">
-                    <label id="overseas-unit-label">海外仓单价 (¥/m³)</label>
-                    <input id="overseasUnitPrice" min="0" step="1" type="number" value="1000"/>
-                </div>
-                <div class="cost-price-group">
-                    <label id="firstmile-unit-label">头程单价 (¥/m³)</label>
-                    <input id="firstMileUnitPrice" min="0" step="1" type="number" value="100"/>
-                </div>
-            </div>
-        </div>
-    </div>
-    <button class="btn-calculate" data-ru="Рассчитать прибыль" data-zh="计算利润" id="calculateBtn">计算利润</button>
-    
-    <!-- 增值服务和业务咨询 -->
-    <div class="advertisement-section">
-        <h3 class="section-title ad-title" id="ad-title">增值服务</h3>
-        <div class="ad-grid">
-            <div class="ad-item">海外仓服务</div>
-            <div class="ad-item">Kaspi头程物流</div>
-            <div class="ad-item">Kaspi电商入驻</div>
-            <div class="ad-item">中亚国际物流</div>
-            <div class="ad-item">签证代办服务</div>
-            <div class="ad-item">车辆出境手续</div>
-            <div class="ad-item">海外公司注册</div>
-            <div class="ad-item">中亚海外仓</div>
-            <div class="ad-item">产品电商代售</div>
-        </div>
-    </div>
-    
-    <div class="contact-section">
-        <div class="contact-info" id="contact-info">
-            <span>业务咨询：</span>
-            <a href="#" id="contact-link">点击联系客服</a>
-        </div>
-    </div>
-    
-    <div class="output-section">
-        <div class="section">
-            <h3 class="section-title" id="fees-title">头程、海外仓费用</h3>
-            <div class="switch-container">
-                <span class="switch-label" id="overseas-toggle-label">是否计算海外仓费用</span>
-                <label class="switch">
-                    <input checked="" id="overseasToggle" type="checkbox"/>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="output-group">
-                <label id="overseas-label">海外仓费用</label>
-                <input class="form-control output-value" id="overseasWarehouse" readonly="" type="text">
-            </div>
-            <div class="switch-container">
-                <span class="switch-label" id="firstmile-toggle-label">是否计算头程费用</span>
-                <label class="switch">
-                    <input checked="" id="firstMileToggle" type="checkbox"/>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="output-group">
-                <label id="firstmile-label">头程费用</label>
-                <input class="form-control output-value" id="firstMile" readonly="" type="text">
-            </div>
-        </div>
-        <div class="section">
-            <h3 class="section-title" id="platform-title">平台费用</h3>
-            <div class="output-group">
-                <label id="cashback-amount-label">下单返利</label>
-                <input class="form-control output-value" id="cashbackAmount" readonly="" type="text">
-            </div>
-            <div class="output-group">
-                <label id="kaspi-shipping-label">Kaspi 运费</label>
-                <input class="form-control output-value" id="kaspiShipping" readonly="" type="text">
-            </div>
-            <div class="output-group">
-                <label id="platform-fee-label">平台佣金</label>
-                <input class="form-control output-value" id="platformFee" readonly="" type="text"/>
-            </div>
-            <div class="output-group">
-                <label id="withdrawal-tax-label">提现税（4%）</label>
-                <input class="form-control output-value" id="withdrawalTax" readonly="" type="text"/>
-            </div>
-        </div>
-    </div>
-    <div class="results-section">
-        <h3 class="section-title" id="return-title">回款费用</h3>
-        <div class="switch-container">
-            <span class="switch-label" id="withdrawal-fee-toggle-label">是否计算提现手续费</span>
-            <label class="switch">
-                <input checked="" id="withdrawalFeeToggle" type="checkbox"/>
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="output-group">
-            <label id="withdrawal-fee-label">提现手续费（1%）</label>
-            <input class="form-control output-value" id="withdrawalFee" readonly="" type="text">
-        </div>
-        <div class="switch-container">
-            <span class="switch-label" id="exchange-loss-toggle-label">是否计算汇损</span>
-            <label class="switch">
-                <input checked="" id="exchangeLossToggle" type="checkbox"/>
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="output-group">
-            <label id="exchange-loss-label">汇损（1.42%）</label>
-            <input class="form-control output-value" id="exchangeLoss" readonly="" type="text">
-        </div>
-        <div class="switch-container">
-            <span class="switch-label" id="remittance-fee-toggle-label">是否计算汇款手续费</span>
-            <label class="switch">
-                <input checked="" id="remittanceFeeToggle" type="checkbox"/>
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="output-group">
-            <label id="remittance-fee-label">汇款手续费</label>
-            <input class="form-control output-value" id="remittanceFee" readonly="" type="text">
-        </div>
-        <div class="results-grid">
-            <div class="result-item">
-                <div class="result-label" id="kaspi-pay-label">Kaspi pay提现到账金额</div>
-                <div class="result-value" id="kaspiPayAmount">0.00</div>
-            </div>
-            <div class="result-item">
-                <div class="result-label" id="return-amount-label">回款金额</div>
-                <div class="result-value" id="returnAmountDisplay">0.00</div>
-            </div>
-            <div class="result-item">
-                <div class="result-label" id="estimated-amount-label">预估到账金额</div>
-                <div class="result-value" id="estimatedAmount">0.00</div>
-            </div>
-            <div class="result-item final">
-                <div class="result-label" id="profit-label-final">利润</div>
-                <div class="result-value" id="profit">0.00</div>
-            </div>
-        </div>
-        <div class="currency-selector">
-            <div class="currency-option">
-                <input checked="" class="currency-radio" id="currency-cny" name="currency" type="radio" value="cny"/>
-                <label class="currency-label" for="currency-cny" id="cny-label">人民币 (CNY)</label>
-            </div>
-            <div class="currency-option">
-                <input class="currency-radio" id="currency-kzt" name="currency" type="radio" value="kzt"/>
-                <label class="currency-label" for="currency-kzt" id="kzt-label">哈萨克斯坦坚戈 (KZT)</label>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 历史记录表格区域 -->
-    <div class="history-section">
-        <h3 class="section-title" id="history-title">历史记录</h3>
-        <div class="history-actions">
-            <button class="history-btn" id="exportHistoryBtn">导出为CSV</button>
-            <button class="history-btn" id="clearHistoryBtn">清空历史</button>
-        </div>
-        <div class="history-table-container">
-            <table id="historyTable">
-                <thead>
-                    <tr>
-                        <th>商品分类</th>
-                        <th>采购价</th>
-                        <th>运费</th>
-                        <th>计划毛利</th>
-                        <th>下单返利(%)</th>
-                        <th>汇款方式</th>
-                        <th>尺寸(长宽高)</th>
-                        <th>体积</th>
-                        <th>重量</th>
-                        <th>海外仓费用</th>
-                        <th>头程费用</th>
-                        <th>下单返利</th>
-                        <th>Kaspi运费</th>
-                        <th>平台佣金</th>
-                        <th>提现税</th>
-                        <th>提现手续费</th>
-                        <th>汇损</th>
-                        <th>汇款手续费</th>
-                        <th>Kaspi提现</th>
-                        <th>回款金额</th>
-                        <th>预估到账</th>
-                        <th>利润</th>
-                        <th>币种</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody">
-                    <!-- 历史记录将通过JS动态添加 -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- 免责声明 -->
-    <div class="disclaimer-section">
-        <h3 class="section-title" id="disclaimer-title">免责声明</h3>
-        <div class="disclaimer-content" id="disclaimer-content">
-            <p>以上计算结果仅供参考，不代表最终费用。实际费用可能因市场变化、汇率波动、平台政策调整等因素而有所不同，请以实际情况为准。</p>
-            <p>本计算器提供的数据仅作为商业决策的参考依据，不构成任何形式的承诺或保证。使用本工具产生的任何商业风险由使用者自行承担。</p>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p id="copyright">© 2023 新疆航贸通国际供应链有限公司 | Kaspi 电商利润计算器</p>
-    </div>
+<div class="container" id="app-content">
+<div class="header">
+<h1 id="company-name">新疆航贸通国际供应链有限公司</h1>
+<h2 id="app-title">Kaspi 电商利润计算器</h2>
+<div class="language-switcher">
+<button class="lang-btn active" data-lang="zh">中文</button>
+<button class="lang-btn" data-lang="ru">Русский</button>
 </div>
-
+</div>
+<div class="exchange-rate">
+<label id="exchange-label">当前汇率：1元人民币兑换</label>
+<input id="exchangeRate" min="0" placeholder="输入汇率" step="0.01" type="number" value="70">
+<label id="currency-label">哈萨克斯坦坚戈</label>
+<div class="error-message" id="exchange-error">汇率必须大于0</div>
+</input></div>
+<div class="input-section">
+<div class="section">
+<h3 class="section-title" id="product-info-title">产品信息</h3>
+<div class="form-group category-container">
+<label for="category-search" id="category-label">商品分类</label>
+<div class="category-search">
+<input autocomplete="off" class="form-control" id="category-search" placeholder="搜索分类..." type="text"/>
+<span class="search-icon">🔍</span>
+<div class="search-results" id="search-results"></div>
+</div>
+<select class="form-control" id="category-select">
+<option data-commission="" value="">-- 请选择商品分类 --</option>
+</select>
+<div class="commission-display" id="commission-display">当前佣金率：0%</div>
+</div>
+<div class="form-group">
+<label for="purchasePrice" id="purchase-label">采购价 (¥)</label>
+<input class="form-control" id="purchasePrice" min="0" placeholder="输入采购价" step="0.01" type="number" value=""/>
+<div class="error-message" id="purchase-error">请输入有效的采购价</div>
+</div>
+<div class="form-group">
+<label for="shippingCost" id="shipping-label">运费 (¥)</label>
+<input class="form-control" id="shippingCost" min="0" placeholder="阿拉木图运费" step="0.01" type="number" value=""/>
+<div class="error-message" id="shipping-error">请输入有效的运费</div>
+</div>
+<div class="form-group">
+<label for="grossProfit" id="gross-profit-label">计划毛利 (¥)</label>
+<input class="form-control" id="grossProfit" min="0" placeholder="输入计划毛利" step="0.01" type="number" value=""/>
+<div class="error-message" id="profit-error">请输入有效的计划毛利</div>
+</div>
+<div class="form-group">
+<label id="cashback-label">下单返利（%）</label>
+<input class="form-control" id="cashback" min="0" placeholder="输入下单返利" step="0.1" type="number" value=""/>
+</div>
+<div class="form-group">
+<label for="paymentMethod" id="payment-label">汇款方式</label>
+<select class="form-control" id="paymentMethod">
+<option value="publicToPublic">银行公对公</option>
+<option value="publicToPrivate">银行公对私</option>
+<option value="privateToPrivate">银行私对私</option>
+<option value="wechat">微信</option>
+<option value="alipay">支付宝</option>
+<option value="kaspi">Kaspi.kz</option>
+</select>
+</div>
+</div>
+<div class="section">
+<h3 class="section-title" id="logistics-title">物流信息</h3>
+<div class="form-group">
+<label id="dimension-label">尺寸（厘米）</label>
+<div class="dimensions">
+<div>
+<input class="form-control" id="length" min="0.1" placeholder="长" step="0.1" type="number" value=""/>
+</div>
+<div>
+<input class="form-control" id="width" min="0.1" placeholder="宽" step="0.1" type="number" value=""/>
+</div>
+<div>
+<input class="form-control" id="height" min="0.1" placeholder="高" step="0.1" type="number" value=""/>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="volume" id="volume-label">体积（立方米）</label>
+<input class="form-control output-value" id="volume" readonly="" type="text"/>
+</div>
+<div class="form-group">
+<label for="weight" id="weight-label">重量（千克）</label>
+<input class="form-control" id="weight" min="0.01" placeholder="输入重量" step="0.01" type="number" value=""/>
+<div class="error-message" id="weight-error">请输入有效的重量</div>
+</div>
+<div class="form-group">
+<label id="kaspi-price-label">Kaspi 售价</label>
+<div class="kaspi-price-container">
+<div class="kaspi-price-box">
+<div class="kaspi-price-label" id="kaspi-price-cny-label">人民币 (¥)</div>
+<input class="form-control output-value" id="kaspiPriceCny" readonly="" type="text"/>
+</div>
+<div class="kaspi-price-box">
+<div class="kaspi-price-label" id="kaspi-price-kzt-label">坚戈 (₸)</div>
+<input class="form-control output-value" id="kaspiPriceKzt" readonly="" type="text"/>
+</div>
+</div>
+</div>
+<div class="cost-price-container">
+<div class="cost-price-group">
+<label id="overseas-unit-label">海外仓单价 (¥/m³)</label>
+<input id="overseasUnitPrice" min="0" step="1" type="number" value="1000"/>
+</div>
+<div class="cost-price-group">
+<label id="firstmile-unit-label">头程单价 (¥/m³)</label>
+<input id="firstMileUnitPrice" min="0" step="1" type="number" value="100"/>
+</div>
+</div>
+</div>
+</div>
+<button class="btn-calculate" data-ru="Рассчитать прибыль" data-zh="计算利润" id="calculateBtn">计算利润</button>
+<!-- 增值服务和业务咨询 -->
+<div class="advertisement-section">
+<h3 class="section-title ad-title" id="ad-title">增值服务</h3>
+<div class="ad-grid">
+<div class="ad-item">海外仓服务</div>
+<div class="ad-item">Kaspi头程物流</div>
+<div class="ad-item">Kaspi电商入驻</div>
+<div class="ad-item">中亚国际物流</div>
+<div class="ad-item">签证代办服务</div>
+<div class="ad-item">车辆出境手续</div>
+<div class="ad-item">海外公司注册</div>
+<div class="ad-item">中亚海外仓</div>
+<div class="ad-item">产品电商代售</div>
+</div>
+</div>
+<div class="contact-section">
+<div class="contact-info" id="contact-info">
+<span>业务咨询：</span>
+<a href="#" id="contact-link">点击联系客服</a>
+</div>
+</div>
+<div class="output-section">
+<div class="section">
+<h3 class="section-title" id="fees-title">头程、海外仓费用</h3>
+<div class="switch-container">
+<span class="switch-label" id="overseas-toggle-label">是否计算海外仓费用</span>
+<label class="switch">
+<input checked="" id="overseasToggle" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="output-group">
+<label id="overseas-label">海外仓费用</label>
+<input class="form-control output-value" id="overseasWarehouse" readonly="" type="text"/>
+</div>
+<div class="switch-container">
+<span class="switch-label" id="firstmile-toggle-label">是否计算头程费用</span>
+<label class="switch">
+<input checked="" id="firstMileToggle" type="checkbox">
+<span class="slider"></span>
+</input></label>
+</div>
+<div class="output-group">
+<label id="firstmile-label">头程费用</label>
+<input class="form-control output-value" id="firstMile" readonly="" type="text"/>
+</div>
+</div>
+<div class="section">
+<h3 class="section-title" id="platform-title">平台费用</h3>
+<div class="output-group">
+<label id="cashback-amount-label">下单返利</label>
+<input class="form-control output-value" id="cashbackAmount" readonly="" type="text"/>
+</div>
+<div class="output-group">
+<label id="kaspi-shipping-label">Kaspi 运费</label>
+<input class="form-control output-value" id="kaspiShipping" readonly="" type="text"/>
+</div>
+<div class="output-group">
+<label id="platform-fee-label">平台佣金</label>
+<input class="form-control output-value" id="platformFee" readonly="" type="text">
+</input></div>
+<div class="output-group">
+<label id="withdrawal-tax-label">提现税（4%）</label>
+<input class="form-control output-value" id="withdrawalTax" readonly="" type="text">
+</input></div>
+</div>
+</div>
+<div class="results-section">
+<h3 class="section-title" id="return-title">回款费用</h3>
+<div class="switch-container">
+<span class="switch-label" id="withdrawal-fee-toggle-label">是否计算提现手续费</span>
+<label class="switch">
+<input checked="" id="withdrawalFeeToggle" type="checkbox">
+<span class="slider"></span>
+</input></label>
+</div>
+<div class="output-group">
+<label id="withdrawal-fee-label">提现手续费（1%）</label>
+<input class="form-control output-value" id="withdrawalFee" readonly="" type="text"/>
+</div>
+<div class="switch-container">
+<span class="switch-label" id="exchange-loss-toggle-label">是否计算汇损</span>
+<label class="switch">
+<input checked="" id="exchangeLossToggle" type="checkbox">
+<span class="slider"></span>
+</input></label>
+</div>
+<div class="output-group">
+<label id="exchange-loss-label">汇损（1.42%）</label>
+<input class="form-control output-value" id="exchangeLoss" readonly="" type="text"/>
+</div>
+<div class="switch-container">
+<span class="switch-label" id="remittance-fee-toggle-label">是否计算汇款手续费</span>
+<label class="switch">
+<input checked="" id="remittanceFeeToggle" type="checkbox">
+<span class="slider"></span>
+</input></label>
+</div>
+<div class="output-group">
+<label id="remittance-fee-label">汇款手续费</label>
+<input class="form-control output-value" id="remittanceFee" readonly="" type="text"/>
+</div>
+<div class="results-grid">
+<div class="result-item">
+<div class="result-label" id="kaspi-pay-label">Kaspi pay提现到账金额</div>
+<div class="result-value" id="kaspiPayAmount">0.00</div>
+</div>
+<div class="result-item">
+<div class="result-label" id="return-amount-label">回款金额</div>
+<div class="result-value" id="returnAmountDisplay">0.00</div>
+</div>
+<div class="result-item">
+<div class="result-label" id="estimated-amount-label">预估到账金额</div>
+<div class="result-value" id="estimatedAmount">0.00</div>
+</div>
+<div class="result-item final">
+<div class="result-label" id="profit-label-final">利润</div>
+<div class="result-value" id="profit">0.00</div>
+</div>
+</div>
+<div class="currency-selector">
+<div class="currency-option">
+<input checked="" class="currency-radio" id="currency-cny" name="currency" type="radio" value="cny">
+<label class="currency-label" for="currency-cny" id="cny-label">人民币 (CNY)</label>
+</input></div>
+<div class="currency-option">
+<input class="currency-radio" id="currency-kzt" name="currency" type="radio" value="kzt"/>
+<label class="currency-label" for="currency-kzt" id="kzt-label">哈萨克斯坦坚戈 (KZT)</label>
+</div>
+</div>
+</div>
+<!-- 历史记录表格区域 -->
+<div class="history-section">
+<h3 class="section-title" id="history-title">历史记录</h3>
+<div class="history-actions">
+<button class="history-btn" id="exportHistoryBtn">导出为CSV</button>
+<button class="history-btn" id="clearHistoryBtn">清空历史</button>
+</div>
+<div class="history-table-container">
+<table id="historyTable">
+<thead>
+<tr>
+<th>商品分类</th>
+<th>采购价</th>
+<th>运费</th>
+<th>计划毛利</th>
+<th>下单返利(%)</th>
+<th>汇款方式</th>
+<th>尺寸(长宽高)</th>
+<th>体积</th>
+<th>重量</th>
+<th>海外仓费用</th>
+<th>头程费用</th>
+<th>下单返利</th>
+<th>Kaspi运费</th>
+<th>平台佣金</th>
+<th>提现税</th>
+<th>提现手续费</th>
+<th>汇损</th>
+<th>汇款手续费</th>
+<th>Kaspi提现</th>
+<th>回款金额</th>
+<th>预估到账</th>
+<th>利润</th>
+<th>币种</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody id="historyTableBody">
+<!-- 历史记录将通过JS动态添加 -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- 免责声明 -->
+<div class="disclaimer-section">
+<h3 class="section-title" id="disclaimer-title">免责声明</h3>
+<div class="disclaimer-content" id="disclaimer-content">
+<p>以上计算结果仅供参考，不代表最终费用。实际费用可能因市场变化、汇率波动、平台政策调整等因素而有所不同，请以实际情况为准。</p>
+<p>本计算器提供的数据仅作为商业决策的参考依据，不构成任何形式的承诺或保证。使用本工具产生的任何商业风险由使用者自行承担。</p>
+</div>
+</div>
+<div class="footer">
+<p id="copyright">© 2023 新疆航贸通国际供应链有限公司 | Kaspi 电商利润计算器</p>
+</div>
+</div>
 <!-- 联系弹窗 -->
-<div id="contactModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modalBody"></div>
-    </div>
+<div class="modal" id="contactModal">
+<div class="modal-content">
+<span class="close">×</span>
+<div id="modalBody"></div>
 </div>
-
+</div>
 <script>
     // translations.js
     const translations = {
