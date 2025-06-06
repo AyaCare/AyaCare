@@ -107,7 +107,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center; 
+            align-items: center; /* 添加这行实现垂直居中 */
             gap: 8px;
         }
 
@@ -116,7 +116,7 @@
             color: #0d47a1;
             font-size: 16px;
             white-space: nowrap;
-            margin: 0; 
+            margin: 0; /* 添加这行消除可能的默认边距 */
         }
 
         .exchange-rate input {
@@ -129,38 +129,8 @@
             color: #1565c0;
             font-weight: bold;
             background-color: #fff;
-            margin: 0; 
-            vertical-align: middle; 
-        }
-        
-        /* 新增货币切换按钮样式 */
-        .currency-switch-container {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            justify-content: center;
-            width: 100%;
-        }
-        
-        .currency-toggle {
-            background: #1a2a6c;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-            min-width: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        
-        .currency-toggle.active {
-            background: #ff8c00;
-            transform: scale(1.05);
+            margin: 0; /* 添加这行消除可能的默认边距 */
+            vertical-align: middle; /* 添加这行确保输入框垂直对齐 */
         }
 
         .input-section {
@@ -198,36 +168,6 @@
             font-weight: 500;
             color: #2c3e50;
             font-size: 14px;
-        }
-        
-        /* 新增输入框货币切换样式 */
-        .input-with-toggle {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-        
-        .input-with-toggle .form-control {
-            flex: 1;
-            padding-right: 50px; 
-        }
-        
-        .input-toggle {
-            position: absolute;
-            right: 10px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 8px;
-            cursor: pointer;
-            min-width: 40px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .input-toggle:hover {
-            background: #2980b9;
         }
 
         .form-control {
@@ -472,6 +412,28 @@
             transform: scale(1.05);
         }
 
+        .currency-selector {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .currency-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .currency-radio {
+            margin-right: 6px;
+        }
+
+        .currency-label {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
         /* 开关样式 */
         .switch-container {
             display: flex;
@@ -668,6 +630,11 @@
                 font-size: 16px;
             }
             
+            .currency-selector {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
             .language-switcher {
                 top: 5px;
                 right: 5px;
@@ -689,22 +656,6 @@
             #countdown {
                 font-size: 12px;
                 padding: 6px 10px;
-            }
-            
-            /* 移动端输入框货币切换样式 */
-            .input-with-toggle .form-control {
-                padding-right: 45px;
-            }
-            
-            .input-toggle {
-                padding: 4px 6px;
-                min-width: 35px;
-            }
-            
-            .currency-toggle {
-                padding: 6px 12px;
-                min-width: 80px;
-                font-size: 14px;
             }
         }
 
@@ -1050,16 +1001,6 @@
         <input id="exchangeRate" min="0" placeholder="输入汇率" step="0.01" type="number" value="70"/>
         <label id="currency-label">哈萨克斯坦坚戈</label>
         <div class="error-message" id="exchange-error">汇率必须大于0</div>
-        
-        <!-- 将整体货币切换按钮移动到这里 -->
-        <div class="currency-switch-container">
-            <button class="currency-toggle active" id="overall-cny-toggle">
-                <span>¥</span> 人民币
-            </button>
-            <button class="currency-toggle" id="overall-kzt-toggle">
-                <span>₸</span> 坚戈
-            </button>
-        </div>
     </div>
     <div class="input-section">
         <div class="section">
@@ -1077,27 +1018,18 @@
                 <div class="commission-display" id="commission-display">当前佣金率：0%</div>
             </div>
             <div class="form-group">
-                <label for="purchasePrice" id="purchase-label">采购价</label>
-                <div class="input-with-toggle">
-                    <input class="form-control" id="purchasePrice" min="0" placeholder="输入采购价" step="0.01" type="number" value=""/>
-                    <button class="input-toggle" data-target="purchasePrice" id="purchase-toggle">¥</button>
-                </div>
+                <label for="purchasePrice" id="purchase-label">采购价 (¥)</label>
+                <input class="form-control" id="purchasePrice" min="0" placeholder="输入采购价" step="0.01" type="number" value=""/>
                 <div class="error-message" id="purchase-error">请输入有效的采购价</div>
             </div>
             <div class="form-group">
-                <label for="shippingCost" id="shipping-label">运费</label>
-                <div class="input-with-toggle">
-                    <input class="form-control" id="shippingCost" min="0" placeholder="阿拉木图运费" step="0.01" type="number" value=""/>
-                    <button class="input-toggle" data-target="shippingCost" id="shipping-toggle">¥</button>
-                </div>
+                <label for="shippingCost" id="shipping-label">运费 (¥)</label>
+                <input class="form-control" id="shippingCost" min="0" placeholder="阿拉木图运费" step="0.01" type="number" value=""/>
                 <div class="error-message" id="shipping-error">请输入有效的运费</div>
             </div>
             <div class="form-group">
-                <label for="grossProfit" id="gross-profit-label">计划毛利</label>
-                <div class="input-with-toggle">
-                    <input class="form-control" id="grossProfit" min="0" placeholder="输入计划毛利" step="0.01" type="number" value=""/>
-                    <button class="input-toggle" data-target="grossProfit" id="profit-toggle">¥</button>
-                </div>
+                <label for="grossProfit" id="gross-profit-label">计划毛利 (¥)</label>
+                <input class="form-control" id="grossProfit" min="0" placeholder="输入计划毛利" step="0.01" type="number" value=""/>
                 <div class="error-message" id="profit-error">请输入有效的计划毛利</div>
             </div>
             <div class="form-group">
@@ -1290,6 +1222,16 @@
                 <div class="result-value" id="profit">0.00</div>
             </div>
         </div>
+        <div class="currency-selector">
+            <div class="currency-option">
+                <input checked="" class="currency-radio" id="currency-cny" name="currency" type="radio" value="cny"/>
+                <label class="currency-label" for="currency-cny" id="cny-label">人民币 (CNY)</label>
+            </div>
+            <div class="currency-option">
+                <input class="currency-radio" id="currency-kzt" name="currency" type="radio" value="kzt"/>
+                <label class="currency-label" for="currency-kzt" id="kzt-label">哈萨克斯坦坚戈 (KZT)</label>
+            </div>
+        </div>
     </div>
     
     <!-- 历史记录表格区域 -->
@@ -1368,9 +1310,9 @@ const translations = {
         currencyLabel: "哈萨克斯坦坚戈",
         productInfo: "产品信息",
         categoryLabel: "商品分类",
-        purchaseLabel: "采购价",
-        shippingLabel: "运费",
-        grossProfitLabel: "计划毛利",
+        purchaseLabel: "采购价 (¥)",
+        shippingLabel: "运费 (¥)",
+        grossProfitLabel: "计划毛利 (¥)",
         cashbackLabel: "下单返利（%）",
         paymentLabel: "汇款方式",
         logisticsTitle: "物流信息",
@@ -1396,6 +1338,8 @@ const translations = {
         profitLabelFinal: "利润",
         copyright: "© 2023 新疆航贸通国际供应链有限公司 | Kaspi 电商利润计算器",
         calculateBtn: "计算利润",
+        cnyLabel: "人民币 (CNY)",
+        kztLabel: "哈萨克斯坦坚戈 (KZT)",
         commissionLabel: "当前佣金率：",
         purchasePlaceholder: "输入采购价",
         shippingPlaceholder: "阿拉木图运费",
@@ -1447,9 +1391,9 @@ const translations = {
         currencyLabel: "казахстанских тенге",
         productInfo: "Информация о продукте",
         categoryLabel: "Категория товара",
-        purchaseLabel: "Закупочная цена",
-        shippingLabel: "Стоимость доставки",
-        grossProfitLabel: "Плановая валовая прибыль",
+        purchaseLabel: "Закупочная цена (₸)",
+        shippingLabel: "Стоимость доставки (₸)",
+        grossProfitLabel: "Плановая валовая прибыль (₸)",
         cashbackLabel: "Кэшбэк за заказ (%)",
         paymentLabel: "Способ оплаты",
         logisticsTitle: "Логистическая информация",
@@ -1475,6 +1419,8 @@ const translations = {
         profitLabelFinal: "Прибыль (₸)",
         copyright: "© 2023 Синьцзянская Международная Логистическая Компания Хан Мао Тун | Калькулятор прибыли Kaspi",
         calculateBtn: "Рассчитать прибыль",
+        cnyLabel: "Юань (CNY)",
+        kztLabel: "Тенге (KZT)",
         commissionLabel: "Текущая комиссия: ",
         purchasePlaceholder: "Введите закупочную цену",
         shippingPlaceholder: "Стоимость доставки в Алматы",
@@ -1595,12 +1541,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const categorySearch = document.getElementById('category-search');
     const searchResults = document.getElementById('search-results');
 
-    // 新增货币切换按钮元素
-    const purchaseToggle = document.getElementById('purchase-toggle');
-    const shippingToggle = document.getElementById('shipping-toggle');
-    const profitToggle = document.getElementById('profit-toggle');
-    const overallCnyToggle = document.getElementById('overall-cny-toggle');
-    const overallKztToggle = document.getElementById('overall-kzt-toggle');
+    // 货币选择器
+    const currencyCny = document.getElementById('currency-cny');
+    const currencyKzt = document.getElementById('currency-kzt');
 
     // 开关标签元素
     const overseasToggleLabel = document.getElementById('overseas-toggle-label');
@@ -1762,7 +1705,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const fieldsToConvert = [
                 purchasePrice,
                 shippingCost,
-                grossProfit, 
+                grossProfit, // 新增计划毛利的转换
                 overseasUnitPrice,
                 firstMileUnitPrice
             ];
@@ -1786,7 +1729,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 更新支付方式选项
             if (currentLanguage === 'ru') {
                 paymentMethod.innerHTML = '<option value="kaspi">Kaspi.kz</option>';
-                overallKztToggle.click();
+                currencyKzt.checked = true;
                 currentCurrency = 'kzt';
             } else {
                 // 恢复中文支付方式选项
@@ -1798,7 +1741,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <option value="alipay">支付宝</option>
                     <option value="kaspi">Kaspi.kz</option>
                 `;
-                overallCnyToggle.click();
+                currencyCny.checked = true;
                 currentCurrency = 'cny';
             }
 
@@ -1807,52 +1750,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 输入框货币切换功能
-    function setupInputToggle(toggleButton, inputField) {
-        let isCNY = true;
-        
-        toggleButton.addEventListener('click', function() {
-            const rate = parseFloat(exchangeRate.value) || 70;
-            const currentValue = parseFloat(inputField.value) || 0;
-            
-            if (isCNY) {
-                // 切换到坚戈
-                inputField.value = (currentValue * rate).toFixed(2);
-                toggleButton.textContent = '₸';
-                toggleButton.dataset.currency = 'kzt';
-                isCNY = false;
-            } else {
-                // 切换到人民币
-                inputField.value = (currentValue / rate).toFixed(2);
-                toggleButton.textContent = '¥';
-                toggleButton.dataset.currency = 'cny';
-                isCNY = true;
-            }
-            
-            // 重新计算
-            calculateAll();
+    // 货币切换功能
+    document.querySelectorAll('.currency-radio').forEach(radio => {
+        radio.addEventListener('change', function () {
+            currentCurrency = this.value;
+            calculateAll(); // 重新计算并显示结果
         });
-    }
-    
-    // 整体货币切换功能
-    overallCnyToggle.addEventListener('click', function() {
-        overallCnyToggle.classList.add('active');
-        overallKztToggle.classList.remove('active');
-        currentCurrency = 'cny';
-        calculateAll();
     });
-    
-    overallKztToggle.addEventListener('click', function() {
-        overallKztToggle.classList.add('active');
-        overallCnyToggle.classList.remove('active');
-        currentCurrency = 'kzt';
-        calculateAll();
-    });
-
-    // 初始化输入框货币切换
-    setupInputToggle(purchaseToggle, purchasePrice);
-    setupInputToggle(shippingToggle, shippingCost);
-    setupInputToggle(profitToggle, grossProfit);
 
     // 更新页面语言
     function updateLanguage() {
@@ -1867,7 +1771,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('category-label').textContent = trans.categoryLabel;
         document.getElementById('purchase-label').textContent = trans.purchaseLabel;
         document.getElementById('shipping-label').textContent = trans.shippingLabel;
-        document.getElementById('gross-profit-label').textContent = trans.grossProfitLabel; 
+        document.getElementById('gross-profit-label').textContent = trans.grossProfitLabel; // 修改为计划毛利
         document.getElementById('cashback-label').textContent = trans.cashbackLabel;
         document.getElementById('payment-label').textContent = trans.paymentLabel;
         document.getElementById('logistics-title').textContent = trans.logisticsTitle;
@@ -1892,6 +1796,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('estimated-amount-label').textContent = trans.estimatedAmountLabel;
         document.getElementById('profit-label-final').textContent = trans.profitLabelFinal;
         document.getElementById('copyright').textContent = trans.copyright;
+        document.getElementById('cny-label').textContent = trans.cnyLabel;
+        document.getElementById('kzt-label').textContent = trans.kztLabel;
 
         document.getElementById('kaspi-price-cny-label').textContent = trans.kaspiPriceCnyLabel;
         document.getElementById('kaspi-price-kzt-label').textContent = trans.kaspiPriceKztLabel;
@@ -1905,7 +1811,7 @@ document.addEventListener('DOMContentLoaded', function () {
         categorySearch.placeholder = trans.categorySearchPlaceholder;
         purchasePrice.placeholder = trans.purchasePlaceholder;
         shippingCost.placeholder = trans.shippingPlaceholder;
-        grossProfit.placeholder = trans.grossProfitPlaceholder;
+        grossProfit.placeholder = trans.grossProfitPlaceholder; // 修改为计划毛利
         cashback.placeholder = trans.cashbackPlaceholder;
         weight.placeholder = trans.weightPlaceholder;
         length.placeholder = trans.lengthPlaceholder;
@@ -2075,7 +1981,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rate = parseFloat(exchangeRate.value);
         const purchase = parseFloat(purchasePrice.value) || 0;
         const shipping = parseFloat(shippingCost.value) || 0;
-        const grossProfitInput = parseFloat(grossProfit.value) || 0; 
+        const grossProfitInput = parseFloat(grossProfit.value) || 0; // 计划毛利
         const cb = parseFloat(cashback.value) || 0;
         const w = parseFloat(weight.value) || 0;
         const vol = calculateVolume();
@@ -2093,7 +1999,7 @@ document.addEventListener('DOMContentLoaded', function () {
             firstMileUnit = (parseFloat(firstMileUnitPrice.value) || 0) / rate;
         }
 
-        // 计算Kaspi售价（人民币）
+        // 计算Kaspi售价（人民币） - 使用计划毛利
         let kaspiPriceCnyValue;
         if (currentLanguage === 'ru') {
             // 俄语界面：采购价和运费是坚戈，计划毛利也是坚戈
@@ -2511,7 +2417,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     purchasePrice.addEventListener('input', () => purchaseError.style.display = 'none');
     shippingCost.addEventListener('input', () => shippingError.style.display = 'none');
-    grossProfit.addEventListener('input', () => profitError.style.display = 'none');
+    grossProfit.addEventListener('input', () => profitError.style.display = 'none'); // 计划毛利
     weight.addEventListener('input', () => weightError.style.display = 'none');
     
     // 新增弹窗功能代码
@@ -2567,7 +2473,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 验证服务有效期
     function validateService() {
         // 从localStorage中获取服务信息
-        const serviceInfo = JSON.parse(localStorage.getItem('kaspiServiceInfo'));
+        const serviceInfo = JSON.parse(localStorage.getItem('kaspitAuth'));
         
         if (!serviceInfo) {
             // 没有服务信息，跳转
@@ -2576,7 +2482,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         // 验证字段是否存在
-        if (!serviceInfo.key || !serviceInfo.encrypted || !serviceInfo.expiryDate) {
+        if (!serviceInfo.key || !serviceInfo.encrypted || !serviceInfo.deviceId || !serviceInfo.expiryDate) {
             redirectToAyaCare();
             return false;
         }
@@ -2634,7 +2540,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // 跳转到指定网站
     function redirectToAyaCare() {
-        window.location.href = 'https://ayacare.github.io/AyaCare/KaspiPricePilot';
+        window.location.href = 'https://ayacare.github.io/AyaCare';
     }
     
     // 根据设备语言设置初始语言
