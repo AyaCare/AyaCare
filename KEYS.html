@@ -445,7 +445,7 @@
                     <div class="input-row">
                         <div class="input-container">
                             <label class="input-label">用户ID (设备ID)</label>
-                            <input type="text" id="device-id" class="key-input" placeholder="例如: 0000-3D81-05A2">
+                            <input type="text" id="device-id" class="key-input" placeholder="可输入任意格式的设备ID">
                         </div>
                         
                         <div class="input-container">
@@ -500,27 +500,15 @@
                 
                 <div class="note">
                     注意：密钥格式为 XXXX-XXXX-XXXX-XXXX-XXXX（X为大写字母或数字）<br>
-                    设备ID格式为 XXXX-XXXX-XXXX（X为大写字母或数字）
+                    设备ID现在可以输入任意格式的文本
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 设备ID输入格式化
+        // 设备ID输入 - 移除格式化限制（自由输入）
         const deviceIdInput = document.getElementById('device-id');
-        deviceIdInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/-/g, '').toUpperCase();
-            if (value.length > 12) value = value.substr(0, 12);
-            
-            let formattedValue = '';
-            for (let i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) formattedValue += '-';
-                formattedValue += value[i];
-            }
-            
-            e.target.value = formattedValue;
-        });
         
         // 有效期按钮事件
         const durationButtons = document.querySelectorAll('.duration-btn');
@@ -609,9 +597,9 @@
             const activeDurationBtn = document.querySelector('.duration-btn.active');
             const duration = parseInt(activeDurationBtn.dataset.duration);
             
-            // 检查设备ID格式
-            if (!deviceId || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(deviceId)) {
-                showResult('error', '设备ID格式错误，请输入有效的设备ID格式：XXXX-XXXX-XXXX');
+            // 检查设备ID是否为空
+            if (!deviceId) {
+                showResult('error', '设备ID不能为空，请输入有效的设备ID');
                 return;
             }
             
