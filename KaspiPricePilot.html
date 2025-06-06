@@ -591,7 +591,7 @@
                     </div>
 
                     <div class="device-id">
-                        <span id="device-id-display">0000-3D81-05A2</span>
+                        <span id="device-id-display">正在生成设备ID...</span>
                         <button class="copy-btn" id="copyBtn">
                             <i class="fas fa-copy"></i> <span class="lang-text" data-key="copyBtn">一键复制</span>
                         </button>
@@ -644,12 +644,37 @@
     </div>
 
     <script>
+        // 生成唯一设备ID的函数
+        function generateDeviceId() {
+            // 尝试从本地存储获取设备ID
+            let deviceId = localStorage.getItem('deviceId');
+            
+            if (!deviceId) {
+                // 生成新的设备ID（格式：XXXX-XXXX-XXXX）
+                const chars = '0123456789ABCDEF';
+                let newId = '';
+                
+                for (let i = 0; i < 12; i++) {
+                    newId += chars.charAt(Math.floor(Math.random() * chars.length));
+                    if (i === 3 || i === 7) {
+                        newId += '-';
+                    }
+                }
+                
+                // 存储到本地存储
+                localStorage.setItem('deviceId', newId);
+                deviceId = newId;
+            }
+            
+            return deviceId;
+        }
+
         // 修改后的keys.json数据
         const keysData = {
             keys: [
                 {
                     key: "5H8J-K2M9-N6P4-Q7R4-GH76", // 原始密钥
-                    deviceId: "0000-3D81-05A2",
+                    deviceId: null, // 不再预置设备ID
                     expiryDate: "2025-12-31T23:59:59"
                 },
             ]
@@ -737,9 +762,15 @@
         let currentLang = 'zh';
         // 存储最后一条验证消息
         let lastResult = { type: null, key: null };
+        // 存储设备ID
+        let deviceId;
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function () {
+            // 生成设备ID并显示
+            deviceId = generateDeviceId();
+            document.getElementById('device-id-display').textContent = deviceId;
+            
             // 检测浏览器语言并设置初始语言
             detectLanguage();
             
@@ -768,7 +799,6 @@
 
             if (storedAuth) {
                 const authData = JSON.parse(storedAuth);
-                const deviceId = document.getElementById('device-id-display').textContent;
                 const now = new Date();
                 const expiryDate = new Date(authData.expiryDate);
 
@@ -822,7 +852,6 @@
             const storedAuth = localStorage.getItem('kaspitAuth');
             if (storedAuth) {
                 const authData = JSON.parse(storedAuth);
-                const deviceId = document.getElementById('device-id-display').textContent;
                 const now = new Date();
                 const expiryDate = new Date(authData.expiryDate);
                 
@@ -854,7 +883,6 @@
 
         // 复制设备ID功能
         document.getElementById('copyBtn').addEventListener('click', () => {
-            const deviceId = document.getElementById('device-id-display').textContent;
             navigator.clipboard.writeText(deviceId).then(() => {
                 const originalText = document.querySelector('#copyBtn span').textContent;
                 document.querySelector('#copyBtn').innerHTML = '<i class="fas fa-check"></i> ' + (currentLang === 'zh' ? '已复制' : 'Скопировано');
@@ -906,7 +934,7 @@
         // 验证按钮点击事件
         document.getElementById('verifyBtn').addEventListener('click', () => {
             const key = document.getElementById('keyInput').value;
-            const deviceId = document.getElementById('device-id-display').textContent;
+            const deviceIdDisplay = document.getElementById('device-id-display').textContent;
 
             // 检查密钥是否为空
             if (!key.trim()) {
@@ -952,7 +980,7 @@
                         expiryDate = item.expiryDate;
 
                         // 检查设备ID是否匹配
-                        if (item.deviceId === deviceId) {
+                        if (item.deviceId === deviceIdDisplay) {
                             idValid = true;
                         }
                         break;
@@ -962,7 +990,7 @@
                 // 检查设备ID是否在系统中存在（单独检查）
                 if (!idValid) {
                     for (const item of keysData.keys) {
-                        if (item.deviceId === deviceId) {
+                        if (item.deviceId === deviceIdDisplay) {
                             idValid = true;
                             break;
                         }
