@@ -610,7 +610,7 @@
                     </div>
 
                     <div class="device-id">
-                        <span id="device-id-display">0000-3D81-05A2</span>
+                        <span id="device-id-display">正在生成设备ID...</span>
                         <button class="copy-btn" id="copyBtn">
                             <i class="fas fa-copy"></i> <span class="lang-text" data-key="copyBtn">一键复制</span>
                         </button>
@@ -666,11 +666,11 @@
         // 修改后的keys.json数据
         const keysData = {
             keys: [
-{
-  "key": "O1N1-VAH3-BDC4-6UG7-GR3R",
-  "deviceId": "0000-3D81-05A2",
-  "expiryDate": "2025-06-07T12:57:50.256Z"
-}
+                {
+                    key: "5H8J-K2M9-N6P4-Q7R4-GH76", // 原始密钥
+                    deviceId: "0000-3D81-05A2",
+                    expiryDate: "2025-12-31T23:59:59"
+                },
             ]
         };
 
@@ -711,7 +711,9 @@
                 'activated': '已激活',
                 'notVerified': '未验证',
                 'notActivated': '未激活',
-                'expired': '已过期'
+                'expired': '已过期',
+                'generatingId': '正在生成设备ID...',
+                'idGenerated': '设备ID已生成'
             },
             'ru': {
                 'companyName': 'Синьцзян Ханмаотунг Международная Цепь Поставок',
@@ -748,7 +750,9 @@
                 'activated': 'Активировано',
                 'notVerified': 'Не проверено',
                 'notActivated': 'Не активировано',
-                'expired': 'Истек срок действия'
+                'expired': 'Истек срок действия',
+                'generatingId': 'Генерация ID устройства...',
+                'idGenerated': 'ID устройства сгенерирован'
             }
         };
 
@@ -756,18 +760,159 @@
         let currentLang = 'zh';
         // 存储最后一条验证消息
         let lastResult = { type: null, key: null };
+        // 设备ID
+        let deviceId = null;
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function () {
             // 检测浏览器语言并设置初始语言
             detectLanguage();
-
+            
+            // 生成设备ID
+            generateDeviceId();
+            
             // 检查是否有有效的本地存储
             checkLocalStorage();
 
             // 启动倒计时
             updateExpiryCountdown();
         });
+
+        // 生成设备ID
+        function generateDeviceId() {
+            const deviceIdDisplay = document.getElementById('device-id-display');
+            deviceIdDisplay.textContent = translations[currentLang]['generatingId'];
+            
+            // 获取或创建设备ID
+            getOrCreateDeviceId().then(id => {
+                deviceId = id;
+                deviceIdDisplay.textContent = id;
+            }).catch(error => {
+                console.error('生成设备ID失败:', error);
+                // 使用随机ID作为降级方案
+                deviceId = generateRandomId();
+                deviceIdDisplay.textContent = deviceId;
+            });
+        }
+
+        // 获取或创建设备ID
+        async function getOrCreateDeviceId() {
+            // 检查localStorage中是否有存储的设备ID
+            const storedId = localStorage.getItem('kaspitDeviceId');
+            if (storedId) {
+                return storedId;
+            }
+            
+            // 生成新ID
+            const newId = await generateFingerprintId();
+            localStorage.setItem('kaspitDeviceId', newId);
+            return newId;
+        }
+
+        // 生成浏览器指纹ID
+        async function generateFingerprintId() {
+            try {
+                // 收集设备信息
+                const info = {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    hardwareConcurrency: navigator.hardwareConcurrency,
+                    deviceMemory: navigator.deviceMemory || 'unknown',
+                    maxTouchPoints: navigator.maxTouchPoints || 'unknown',
+                    screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
+                    timezone: new Date().getTimezoneOffset(),
+                    plugins: getPluginsFingerprint(),
+                    fonts: await getFontsFingerprint()
+                };
+                
+                // 创建信息字符串
+                const infoString = JSON.stringify(info);
+                
+                // 生成SHA-256哈希
+                const encoder = new TextEncoder();
+                const data = encoder.encode(infoString);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                
+                // 转换为十六进制字符串
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                
+                // 格式化为XXXX-XXXX-XXXX
+                return formatDeviceId(hashHex.substring(0, 12));
+            } catch (error) {
+                // 降级方案：使用随机ID
+                console.error('指纹生成失败:', error);
+                return generateRandomId();
+            }
+        }
+
+        // 获取字体指纹
+        async function getFontsFingerprint() {
+            const fontList = [
+                'Arial', 'Arial Black', 'Courier New', 'Georgia', 
+                'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana',
+                'Microsoft YaHei', 'SimSun', 'SimHei', 'KaiTi',
+                '宋体', '黑体', '楷体', '微软雅黑'
+            ];
+            
+            const availableFonts = [];
+            
+            // 使用Canvas检测字体
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 200;
+            canvas.height = 50;
+            
+            for (const font of fontList) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.font = '20px "' + font + '"';
+                context.fillText('abcdefghijklmnopqrstuvwxyz', 10, 30);
+                
+                const text = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
+                context.font = '20px "Comic Sans", "' + font + '"';
+                context.fillText('abcdefghijklmnopqrstuvwxyz', 10, 30);
+                
+                if (context.measureText('abcdefghijklmnopqrstuvwxyz').width !== text) {
+                    availableFonts.push(font);
+                }
+            }
+            
+            return availableFonts;
+        }
+
+        // 获取插件指纹
+        function getPluginsFingerprint() {
+            const plugins = [];
+            if (navigator.plugins) {
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    plugins.push(navigator.plugins[i].name);
+                }
+            }
+            return plugins;
+        }
+
+        // 生成随机ID作为降级方案
+        function generateRandomId() {
+            const hexValues = '0123456789ABCDEF';
+            let id = '';
+            
+            for (let i = 0; i < 12; i++) {
+                id += hexValues.charAt(Math.floor(Math.random() * hexValues.length));
+                if (i === 3 || i === 7) id += '-';
+            }
+            
+            return id;
+        }
+
+        // 格式化设备ID
+        function formatDeviceId(id) {
+            if (id.length < 12) {
+                // 如果长度不足，填充0
+                id = id.padEnd(12, '0');
+            }
+            return `${id.substring(0, 4)}-${id.substring(4, 8)}-${id.substring(8, 12)}`;
+        }
 
         // 检测浏览器语言并设置
         function detectLanguage() {
@@ -787,7 +932,6 @@
 
             if (storedAuth) {
                 const authData = JSON.parse(storedAuth);
-                const deviceId = document.getElementById('device-id-display').textContent;
                 const now = new Date();
                 const expiryDate = new Date(authData.expiryDate);
 
@@ -841,7 +985,6 @@
             const storedAuth = localStorage.getItem('kaspitAuth');
             if (storedAuth) {
                 const authData = JSON.parse(storedAuth);
-                const deviceId = document.getElementById('device-id-display').textContent;
                 const now = new Date();
                 const expiryDate = new Date(authData.expiryDate);
 
@@ -873,7 +1016,6 @@
 
         // 复制设备ID功能
         document.getElementById('copyBtn').addEventListener('click', () => {
-            const deviceId = document.getElementById('device-id-display').textContent;
             navigator.clipboard.writeText(deviceId).then(() => {
                 const originalText = document.querySelector('#copyBtn span').textContent;
                 document.querySelector('#copyBtn').innerHTML = '<i class="fas fa-check"></i> ' + (currentLang === 'zh' ? '已复制' : 'Скопировано');
@@ -925,7 +1067,6 @@
         // 验证按钮点击事件
         document.getElementById('verifyBtn').addEventListener('click', () => {
             const key = document.getElementById('keyInput').value;
-            const deviceId = document.getElementById('device-id-display').textContent;
 
             // 检查密钥是否为空
             if (!key.trim()) {
