@@ -2654,9 +2654,9 @@ function validateService() {
         return false;
     }
     
-    // 验证设备ID是否匹配
-    const currentDeviceId = "0000-3D81-05A2"; // 这里应该与密钥页面相同的设备ID获取逻辑
-    if (authData.deviceId !== currentDeviceId) {
+    // 验证设备ID是否匹配 - 使用与密钥页面相同的逻辑
+    const storedId = localStorage.getItem('kaspitDeviceId');
+    if (!storedId || authData.deviceId !== storedId) {
         redirectToKeyPage();
         return false;
     }
