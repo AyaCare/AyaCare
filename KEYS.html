@@ -554,9 +554,15 @@
             return btoa(hex);
         }
         
-        // 格式化JSON显示
+        // 格式化JSON显示 - 修改后：键名不带引号
         function formatJSON(data) {
-            return JSON.stringify(data, null, 2);
+            // 创建自定义格式的JSON字符串
+            let result = '{\n';
+            result += `  key: "${data.key}",\n`;
+            result += `  deviceId: "${data.deviceId}",\n`;
+            result += `  expiryDate: "${data.expiryDate}"\n`;
+            result += '}';
+            return result;
         }
         
         // 显示验证结果
