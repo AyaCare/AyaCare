@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>汇率计算器</title>
+    <title>移动端汇率计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             color: #fff;
             min-height: 100vh;
             padding: 20px;
@@ -30,12 +31,19 @@
             text-align: center;
             margin: 10px 0 20px;
             width: 100%;
+            position: relative;
         }
         
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 15px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .tabs {
@@ -46,23 +54,30 @@
         }
         
         .tab {
-            width: 70px;
-            height: 70px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 3px solid transparent;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab i {
+            font-size: 24px;
+            margin-bottom: 5px;
         }
         
         .tab.active {
             transform: scale(1.1);
-            border-color: white;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
         
         .tab.red {
@@ -79,75 +94,120 @@
         
         .calculator-container {
             width: 100%;
-            max-width: 450px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            max-width: 500px;
+            background: rgba(30, 30, 60, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 25px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .calculator {
             display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .calculator.active {
             display: block;
         }
         
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            font-weight: 600;
+            color: #f0f0f0;
+        }
+        
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 500;
             font-size: 15px;
+            color: #e0e0ff;
         }
         
         input[type="number"] {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(255, 255, 255, 0.15);
+            padding: 16px 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(20, 20, 40, 0.8);
             color: white;
-            font-size: 16px;
+            font-size: 17px;
             outline: none;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
         }
         
         input[type="number"]:focus {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(30, 30, 60, 0.9);
+            border-color: rgba(100, 150, 255, 0.5);
+            box-shadow: 0 0 10px rgba(100, 150, 255, 0.3);
         }
         
         input[type="number"]::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(200, 200, 255, 0.5);
+            font-size: 15px;
         }
         
         .result-box {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 14px;
-            border-radius: 12px;
+            background: rgba(40, 40, 80, 0.7);
+            padding: 16px 20px;
+            border-radius: 15px;
             margin-top: 8px;
-            font-size: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .highlight {
+            color: #ffd166;
         }
         
         .explanation {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            color: rgba(220, 220, 255, 0.8);
             margin-top: 20px;
-            line-height: 1.5;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
+            line-height: 1.6;
+            padding: 20px;
+            background: rgba(20, 20, 40, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .explanation h3 {
+            margin-bottom: 12px;
+            color: #ffd166;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .explanation p {
             margin-bottom: 8px;
-            color: #fff;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .explanation p i {
+            margin-right: 10px;
+            color: #38ef7d;
+            min-width: 20px;
         }
         
         .footer {
@@ -155,7 +215,8 @@
             text-align: center;
             padding: 15px;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(200, 200, 255, 0.7);
+            width: 100%;
         }
         
         /* 响应式调整 */
@@ -165,130 +226,160 @@
             }
             
             .tab {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
                 font-size: 12px;
             }
             
+            .tab i {
+                font-size: 22px;
+            }
+            
             .calculator-container {
-                padding: 20px;
+                padding: 20px 15px;
             }
             
             input[type="number"] {
-                padding: 12px;
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+            
+            .result-box {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 18px;
             }
         }
         
         @media (max-width: 350px) {
             .tab {
-                width: 55px;
-                height: 55px;
+                width: 60px;
+                height: 60px;
+            }
+            
+            h1 {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>汇率计算器</h1>
+        <h1><i class="fas fa-calculator"></i> 汇率计算器</h1>
         <div class="tabs">
-            <div class="tab red active" data-tab="buy">买入</div>
-            <div class="tab green" data-tab="sell">卖出</div>
-            <div class="tab blue" data-tab="profit">利润</div>
+            <div class="tab red active" data-tab="buy">
+                <i class="fas fa-shopping-cart"></i>
+                <span>买入</span>
+            </div>
+            <div class="tab green" data-tab="sell">
+                <i class="fas fa-cash-register"></i>
+                <span>卖出</span>
+            </div>
+            <div class="tab blue" data-tab="profit">
+                <i class="fas fa-chart-line"></i>
+                <span>利润</span>
+            </div>
         </div>
     </div>
     
     <div class="calculator-container">
         <!-- 买入计算器 -->
         <div class="calculator active" id="buy-calculator">
+            <div class="section-title">买入人民币计算</div>
             <div class="input-group">
-                <label for="exchange-rate">当前汇率 (1元人民币 : 索姆)</label>
+                <label for="exchange-rate"><i class="fas fa-exchange-alt"></i> 当前汇率 (1元人民币 : 索姆)</label>
                 <input type="number" id="exchange-rate" placeholder="输入汇率" value="12.5" step="0.01">
             </div>
             
             <div class="input-group">
-                <label for="buy-cny">买入（人民币）</label>
+                <label for="buy-cny"><i class="fas fa-yen-sign"></i> 买入（人民币）</label>
                 <input type="number" id="buy-cny" placeholder="输入想买入多少人民币的索姆" step="100">
             </div>
             
             <div class="input-group">
-                <label for="buy-spread">汇差比例 (%)</label>
+                <label for="buy-spread"><i class="fas fa-percentage"></i> 汇差比例 (%)</label>
                 <input type="number" id="buy-spread" placeholder="输入汇差比例" value="3" step="0.1">
             </div>
             
             <div class="input-group">
-                <label>买入汇率</label>
+                <label><i class="fas fa-calculator"></i> 买入汇率</label>
                 <div class="result-box" id="buy-rate-result">-</div>
             </div>
             
             <div class="input-group">
-                <label>收入（索姆）</label>
+                <label><i class="fas fa-coins"></i> 收入（索姆）</label>
                 <div class="result-box" id="buy-income-result">-</div>
             </div>
         </div>
         
         <!-- 卖出计算器 -->
         <div class="calculator" id="sell-calculator">
+            <div class="section-title">卖出人民币计算</div>
             <div class="input-group">
-                <label for="sell-exchange-rate">当前汇率 (1元人民币 : 索姆)</label>
+                <label for="sell-exchange-rate"><i class="fas fa-exchange-alt"></i> 当前汇率 (1元人民币 : 索姆)</label>
                 <input type="number" id="sell-exchange-rate" placeholder="输入汇率" value="12.5" step="0.01">
             </div>
             
             <div class="input-group">
-                <label for="sell-cny">卖出（人民币）</label>
+                <label for="sell-cny"><i class="fas fa-yen-sign"></i> 卖出（人民币）</label>
                 <input type="number" id="sell-cny" placeholder="输入想卖出多少人民币的索姆" step="100">
             </div>
             
             <div class="input-group">
-                <label for="sell-spread">汇差比例 (%)</label>
+                <label for="sell-spread"><i class="fas fa-percentage"></i> 汇差比例 (%)</label>
                 <input type="number" id="sell-spread" placeholder="输入汇差比例" value="3" step="0.1">
             </div>
             
             <div class="input-group">
-                <label>卖出汇率</label>
+                <label><i class="fas fa-calculator"></i> 卖出汇率</label>
                 <div class="result-box" id="sell-rate-result">-</div>
             </div>
             
             <div class="input-group">
-                <label>支出（索姆）</label>
+                <label><i class="fas fa-money-bill-wave"></i> 支出（索姆）</label>
                 <div class="result-box" id="sell-expense-result">-</div>
             </div>
         </div>
         
         <!-- 利润计算器 -->
         <div class="calculator" id="profit-calculator">
+            <div class="section-title">利润计算</div>
             <div class="input-group">
-                <label for="profit-exchange-rate">当前汇率 (1元人民币 : 索姆)</label>
+                <label for="profit-exchange-rate"><i class="fas fa-exchange-alt"></i> 当前汇率 (1元人民币 : 索姆)</label>
                 <input type="number" id="profit-exchange-rate" placeholder="输入汇率" value="12.5" step="0.01">
             </div>
             
             <div class="input-group">
-                <label for="cost">成本（人民币）</label>
+                <label for="cost"><i class="fas fa-money-bill-alt"></i> 成本（人民币）</label>
                 <input type="number" id="cost" placeholder="输入买入总额" step="100">
             </div>
             
             <div class="input-group">
-                <label for="profit-spread">汇差比例 (%)</label>
+                <label for="profit-spread"><i class="fas fa-percentage"></i> 汇差比例 (%)</label>
                 <input type="number" id="profit-spread" placeholder="输入汇差比例" value="3" step="0.1">
             </div>
             
             <div class="input-group">
-                <label>利润（人民币）</label>
+                <label><i class="fas fa-piggy-bank"></i> 利润（人民币）</label>
                 <div class="result-box" id="profit-result">-</div>
             </div>
         </div>
     </div>
     
     <div class="explanation">
-        <h3>计算说明</h3>
-        <p>• 买入汇率 = 当前汇率 + (当前汇率 × 汇差比例)</p>
-        <p>• 收入索姆 = 买入人民币 × 买入汇率</p>
-        <p>• 卖出汇率 = 当前汇率 - (当前汇率 × 汇差比例)</p>
-        <p>• 支出索姆 = 卖出人民币 × 卖出汇率</p>
-        <p>• 利润 = 成本 × (买入汇率/卖出汇率) - 成本</p>
+        <h3><i class="fas fa-info-circle"></i> 计算说明</h3>
+        <p><i class="fas fa-circle"></i> 买入汇率 = 当前汇率 + (当前汇率 × 汇差比例)</p>
+        <p><i class="fas fa-circle"></i> 收入索姆 = 买入人民币 × 买入汇率</p>
+        <p><i class="fas fa-circle"></i> 卖出汇率 = 当前汇率 - (当前汇率 × 汇差比例)</p>
+        <p><i class="fas fa-circle"></i> 支出索姆 = 卖出人民币 × 卖出汇率</p>
+        <p><i class="fas fa-circle"></i> 利润 = 成本 × (买入汇率/卖出汇率) - 成本</p>
     </div>
     
     <div class="footer">
-        <p>汇率计算器 v1.0 | 适用于人民币与索姆兑换</p>
+        <p>汇率计算器 v1.2 | 人民币 ↔ 索姆 | 专为移动端优化</p>
     </div>
     
     <script>
@@ -337,7 +428,10 @@
             const income = cny * buyRate;
             
             buyRateResult.textContent = buyRate.toFixed(4);
+            buyRateResult.innerHTML = `${buyRate.toFixed(4)} <span class="highlight">索姆/人民币</span>`;
+            
             buyIncomeResult.textContent = income.toFixed(2);
+            buyIncomeResult.innerHTML = `${income.toFixed(2)} <span class="highlight">索姆</span>`;
         }
         
         // 计算卖出相关结果
@@ -350,7 +444,10 @@
             const expense = cny * sellRate;
             
             sellRateResult.textContent = sellRate.toFixed(4);
+            sellRateResult.innerHTML = `${sellRate.toFixed(4)} <span class="highlight">索姆/人民币</span>`;
+            
             sellExpenseResult.textContent = expense.toFixed(2);
+            sellExpenseResult.innerHTML = `${expense.toFixed(2)} <span class="highlight">索姆</span>`;
         }
         
         // 计算利润
@@ -366,6 +463,7 @@
             const profit = cost * (buyRate / sellRate) - cost;
             
             profitResult.textContent = profit.toFixed(2);
+            profitResult.innerHTML = `${profit.toFixed(2)} <span class="highlight">人民币</span>`;
         }
         
         // 添加事件监听器
@@ -386,20 +484,6 @@
         calculateSell();
         calculateProfit();
         
-        // 移动端全屏处理
-        function launchFullscreen() {
-            const element = document.documentElement;
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        }
-        
         // 页面加载时尝试全屏（需要用户交互，所以这里注释掉）
         // 实际使用时可以添加一个按钮让用户点击触发全屏
         // window.addEventListener('load', () => {
@@ -407,6 +491,16 @@
         //         launchFullscreen();
         //     }
         // });
+        
+        // 添加键盘收起功能（移动端优化）
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.blur();
+                });
+            }
+        });
     </script>
 </body>
 </html>
